@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfólio • Ti Eletrofrio</title>
+  <meta name="description" content="Desenvolvedor de aplicações web, mobile Flutter e integrações de APIs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+
+<body class="dark">
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#inicio">Ti<span>Dev</span></a>
+      <nav>
+        <a href="#inicio">Início</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#contatos">Contatos</a>
+      </nav>
+
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+<footer class="site-footer v2" role="contentinfo">
+  <div class="footer-wrap">
+
+    <!-- Ícones clicáveis (links nos ícones) -->
+    <div class="social">
+      <a href="https://github.com/rafaeltutu" aria-label="GitHub" rel="noopener" target="_blank">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path fill="currentColor"
+            d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.69c-2.78.61-3.37-1.19-3.37-1.19-.46-1.18-1.12-1.49-1.12-1.49-.92-.63.07-.62.07-.62 1.02.08 1.55 1.06 1.55 1.06 .9 1.54 2.36 1.09 2.94.83 .09-.65.35-1.09.64-1.34 -2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.98 1.03-2.68 -.1-.25-.45-1.27.1-2.65 0 0 .85-.27 2.79 1.02A9.7 9.7 0 0 1 12 6.8c.86 0 1.73.12 2.54.35 1.93-1.29 2.78-1.02 2.78-1.02 .56 1.38.21 2.4.1 2.65 .64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95 .36.31.69.92.69 1.86v2.75c0 .27.18.59.69.49A10 10 0 0 0 12 2Z" />
+        </svg>
+      </a>
+
+      <a href="https://www.linkedin.com/in/rafaeltutu/" aria-label="LinkedIn" rel="noopener" target="_blank">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path fill="currentColor"
+            d="M6.94 8.5H4.09V20h2.85V8.5ZM5.52 7.19c.92 0 1.66-.75 1.66-1.66s-.74-1.66-1.66-1.66 -1.66.75-1.66 1.66 .74 1.66 1.66 1.66ZM20 20h-2.84v-5.97c0-1.42-.03-3.25-1.98-3.25 -1.98 0-2.28 1.55-2.28 3.15V20H10.07V8.5h2.73v1.56h.04c.38-.72 1.32-1.48 2.72-1.48 2.91 0 3.44 1.92 3.44 4.42V20Z" />
+        </svg>
+      </a>
+
+      <a href="mailto:rafaeltutu19@gmail.com" aria-label="E-mail">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path fill="currentColor"
+            d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Linha de marca + hotspot invisível para o PIN -->
+    <div class="brandline">
+      © Tidev — Todos os direitos reservados
+      <span id="admin-brand-hotspot" aria-hidden="true"></span>
+    </div>
+
+    <!-- Contato textual (opcional) -->
+    <div class="contactline">
+      <a href="https://github.com/rafaeltutu" target="_blank" rel="noopener">github.com/rafaeltutu</a>
+      <span class="sep">•</span>
+      <a href="https://www.linkedin.com/in/rafaeltutu/" target="_blank" rel="noopener">linkedin.com/in/rafaeltutu</a>
+      <span class="sep">•</span>
+      <a href="mailto:rafaeltutu19@gmail.com">rafaeltutu19@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Hotspot de contingência (opcional, se quiser um botão 100% invisível no canto) -->
+<button id="admin-door"
+  aria-label="admin door" title=""
+  style="position:fixed; inset:auto 16px 10px auto; width:42px; height:18px; opacity:0; border:0; background:transparent; cursor:pointer;">
+</button>
+
+
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section container">
+  <h2>Leads</h2>
+
+  <p style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <a class="btn btn-ghost" href="{{ url_for('admin_leads_csv') }}">Exportar CSV</a>
+    <a class="btn btn-ghost" href="{{ url_for('admin_logout') }}">Sair</a>
+  </p>
+
+  <div class="table-wrap card">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Telefone</th>
+          <th>Mensagem</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in leads %}
+        <tr>
+          <td>{{ l.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+          <td>{{ l.name }}</td>
+          <td>{{ l.email }}</td>
+          <td>{{ l.phone or '-' }}</td>
+          <td style="max-width: 520px; white-space: pre-wrap;">{{ l.message }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5">Sem registros.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

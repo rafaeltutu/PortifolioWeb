@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- HERO em tela cheia com YouTube BG -->
+<section id="inicio" class="hero snap fullscreen" aria-label="Abertura">
+  <div class="video-wrap">
+    <div id="yt-bg" class="yt-wrap">
+      <!-- O YouTube IFrame API injeta o player aqui -->
+      <div id="yt-iframe"></div>
+    </div>
+
+    <div class="video-overlay"></div>
+
+    <div class="hero-content">
+      <h1>Transformo ideias em sistemas inteligentes.</h1>
+      <p class="hero-sub">Criação de sistemas e aplicativos sob medida para você e sua empresa.</p>
+      <a href="#sobre" class="btn btn-primary">Conheça meu trabalho</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">role para ver mais</div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre" class="section fullscreen snap" aria-labelledby="sobre-title">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="prose" id="sobre-content">
+        <h2 id="sobre-title">Sobre</h2>
+
+        <p>
+          Há <strong>5 anos</strong> ajudo pessoas e empresas a tirarem ideias do papel com
+          <strong>sistemas e aplicativos sob medida</strong>. Falo a sua língua: entendo o problema,
+          proponho o caminho mais simples e entrego rápido, com acompanhamento de perto.
+        </p>
+
+        <h3>O que eu faço</h3>
+        <ul>
+          <li><strong>Sistemas para web</strong> (painéis, portais, cadastros, relatórios).</li>
+          <li><strong>Aplicativos</strong> para Android/iOS e versão web.</li>
+          <li><strong>Integração entre sistemas</strong> (ex.: ERP, planilhas e outros).</li>
+          <li><strong>Automação de rotinas</strong> para reduzir trabalho manual.</li>
+          <li><strong>Banco de dados</strong> bem organizado para decisões seguras.</li>
+        </ul>
+
+        <h3>Como eu trabalho</h3>
+        <ul>
+          <li><strong>Entendo a necessidade</strong> em uma conversa rápida.</li>
+          <li><strong>Desenho um protótipo</strong> para alinharmos a visão.</li>
+          <li><strong>Entrego por etapas</strong>, com testes e ajustes contínuos.</li>
+          <li><strong>Suporte</strong> após a entrega para evoluir junto com você.</li>
+        </ul>
+      </div>
+
+      <!-- KPIs -->
+      <aside class="stats-panel" aria-label="Indicadores de experiência">
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="kpi">+5</div>
+            <div class="meta"><span>anos de</span><span>experiência</span></div>
+          </div>
+          <div class="stat">
+            <div class="kpi">+20</div>
+            <div class="meta"><span>projetos</span><span>entregues</span></div>
+          </div>
+          <div class="stat">
+            <div class="kpi">99.9%</div>
+            <div class="meta"><span>uptime em</span><span>produção</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS com imagens -->
+<section id="servicos" class="section fullscreen snap" aria-labelledby="servicos-title">
+  <div class="container">
+    <h2 id="servicos-title">Serviços</h2>
+
+    <div class="grid grid-4">
+
+      <!-- Aplicações Web -->
+      <article class="card service">
+        <img class="service-img" src="{{ url_for('static', filename='img/servicos/web.png') }}"
+          alt="Aplicação web com back-end Flask e front-end limpo" loading="lazy" decoding="async">
+        <div class="service-body">
+          <div class="service-kicker">code</div>
+          <h3>Aplicações Web</h3>
+          <p>Back-end robusto (Flask) com front limpo e acessível.</p>
+        </div>
+      </article>
+
+      <!-- Apps Mobile (Flutter) -->
+      <article class="card service">
+        <img class="service-img" src="{{ url_for('static', filename='img/servicos/flutter.png') }}"
+          alt="Apps mobile e web feitos em Flutter" loading="lazy" decoding="async">
+        <div class="service-body">
+          <div class="service-kicker">smartphone</div>
+          <h3>Apps Mobile (Flutter)</h3>
+          <p>Android/iOS e Web com foco em performance e UX.</p>
+        </div>
+      </article>
+
+      <!-- Integrações de APIs -->
+      <article class="card service">
+        <img class="service-img" src="{{ url_for('static', filename='img/servicos/apis.png') }}"
+          alt="Integrações de APIs, automações e WebSockets" loading="lazy" decoding="async">
+        <div class="service-body">
+          <div class="service-kicker">plug</div>
+          <h3>Integrações de APIs</h3>
+          <p>REST, autenticação, ETL, automações e WebSockets.</p>
+        </div>
+      </article>
+
+      <!-- Dados & SQL -->
+      <article class="card service">
+        <img class="service-img" src="{{ url_for('static', filename='img/servicos/sql.png') }}"
+          alt="Modelagem de banco de dados, views e pipelines" loading="lazy" decoding="async">
+        <div class="service-body">
+          <div class="service-kicker">database</div>
+          <h3>Dados &amp; SQL</h3>
+          <p>Modelagem, views complexas e pipelines confiáveis.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJETOS -->
+<section id="projetos" class="section snap" aria-labelledby="projetos-title">
+  <div class="container">
+    <h2 id="projetos-title">Projetos</h2>
+
+    <!-- APENAS AQUI usamos flex para centralizar -->
+    <div class="projects-flex">
+
+      <!-- Agiliza -->
+      <article class="card project">
+        <div class="badge">Flutter • Flask API</div>
+        <h3>Agiliza — Gestão Logística</h3>
+        <p>
+          Sistema de chão de fábrica e expedição: separação, conferência e
+          controle de carregamento. Registro e <strong>visualização de imagens</strong> por volume/pedido,
+          histórico completo e acompanhamento do motorista.
+        </p>
+        <div class="tags">
+          <span>#logística</span><span>#expedição</span><span>#imagens</span>
+          <span>#Flutter</span><span>#Flask</span><span>#SQLServer</span>
+        </div>
+      </article>
+
+      <!-- SGP -->
+      <article class="card project">
+        <div class="badge">Flask (Front + Back)</div>
+        <h3>SGP — Sistema de Gestão de Performance</h3>
+        <p>
+          Plataforma interna para gestão de pessoas: avaliações de <strong>45 e 90 dias</strong>,
+          abertura de vagas, avaliação de desempenho para promoção e fluxo completo
+          de aprovação por gestores — tudo pelo sistema.
+        </p>
+        <div class="tags">
+          <span>#RH</span><span>#avaliações</span><span>#promoções</span>
+          <span>#workflow</span><span>#Flask</span><span>#SQLServer</span>
+        </div>
+      </article>
+
+      <!-- CondOrb -->
+      <article class="card project">
+        <div class="badge">Flutter</div>
+        <h3>CondOrb — Reservas de Áreas</h3>
+        <p>
+          Aplicativo para condomínios com reservas de <strong>academia, lavanderia, salão de festas</strong> e
+          outras áreas comuns. Regras de horário, confirmação e histórico do morador.
+        </p>
+        <div class="tags">
+          <span>#condomínio</span><span>#reservas</span><span>#mobile</span>
+          <span>#Flutter</span>
+        </div>
+      </article>
+
+      <!-- Portal de Avisos -->
+      <article class="card project">
+        <div class="badge">Flask • YouTube</div>
+        <h3>Portal de Avisos — Sinalização Interna</h3>
+        <p>
+          Painel para TVs do refeitório/áreas comuns: exibe <strong>avisos do RH</strong> e roda
+          uma <strong>playlist do YouTube</strong> ao fundo. Interface simples para publicar e
+          ordenar avisos.
+        </p>
+        <div class="tags">
+          <span>#sinalização</span><span>#RH</span><span>#YouTube</span>
+          <span>#Flask</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTATOS -->
+<section id="contatos" class="section fullscreen snap" aria-labelledby="contatos-title">
+  <div class="container">
+    <h2 id="contatos-title">Contatos</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-wrap">
+      {% for cat, msg in messages %}
+      <div class="flash {{cat}}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form class="card contact" method="POST" action="{{ url_for('contato') }}" novalidate>
+      <div class="grid grid-2">
+        <div class="form-field">
+          <label for="name">Nome*</label>
+          <input id="name" name="name" type="text" placeholder="Seu nome" required>
+        </div>
+        <div class="form-field">
+          <label for="email">E-mail*</label>
+          <input id="email" name="email" type="email" placeholder="voce@empresa.com" required>
+        </div>
+        <div class="form-field">
+          <label for="phone">Telefone</label>
+          <input id="phone" name="phone" type="text" placeholder="(xx) xxxxx-xxxx">
+        </div>
+        <!-- honeypot anti-spam -->
+        <div class="form-field" aria-hidden="true" style="display:none;">
+          <label for="website">Website</label>
+          <input id="website" name="website" type="text" value="">
+        </div>
+        <div class="form-field grid-span-2">
+          <label for="message">Mensagem*</label>
+          <textarea id="message" name="message" rows="5" placeholder="Conte um pouco da sua necessidade"
+            required></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

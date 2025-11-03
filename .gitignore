@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtualenv
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Projeto Flask
+instance/
+**/leads.db
+*.sqlite
+*.sqlite3
+.env
+
+# Build/Cache
+dist/
+build/
+*.egg-info/

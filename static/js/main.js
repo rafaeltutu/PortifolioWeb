@@ -12,6 +12,7 @@
 const YT_VIDEO_ID = "Hgg7M3kSqyE"; // ID do vídeo de fundo
 const PARALLAX_MAX_SHIFT = -12; // deslocamento máx. em % (negativo = sobe)
 const HOTSPOT_ID = "admin-brand-hotspot";
+const REDUCE_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------------------------
    ÂNCORAS — rolagem suave
@@ -28,7 +29,7 @@ document.addEventListener("click", function (ev) {
 
   ev.preventDefault();
   // scroll suave até a seção (honra scroll-padding-top do CSS)
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
+  el.scrollIntoView({ behavior: REDUCE_MOTION ? "auto" : "smooth", block: "start" });
 
   // foco para acessibilidade após scroll
   setTimeout(function () {
@@ -38,12 +39,50 @@ document.addEventListener("click", function (ev) {
 });
 
 /* ---------------------------
+   MENU MOBILE
+---------------------------- */
+(function () {
+  var toggle = document.querySelector(".nav-toggle");
+  var nav = document.getElementById("site-nav");
+  if (!toggle || !nav) return;
+
+  function setOpen(open) {
+    document.body.classList.toggle("nav-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", function () {
+    var isOpen = document.body.classList.contains("nav-open");
+    setOpen(!isOpen);
+  });
+
+  nav.addEventListener("click", function (ev) {
+    if (ev.target.closest("a")) setOpen(false);
+  });
+
+  document.addEventListener("click", function (ev) {
+    if (!document.body.classList.contains("nav-open")) return;
+    if (nav.contains(ev.target) || toggle.contains(ev.target)) return;
+    setOpen(false);
+  });
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") setOpen(false);
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 900) setOpen(false);
+  });
+})();
+
+/* ---------------------------
    PARALLAX do BG YouTube
 ---------------------------- */
 (function () {
   var ytWrap = document.getElementById("yt-bg");
   var hero = document.querySelector(".hero");
   if (!ytWrap || !hero) return;
+  if (REDUCE_MOTION) return;
 
   var ticking = false;
   function onScrollOrResize() {
@@ -154,6 +193,30 @@ document.addEventListener("click", function (ev) {
 })();
 
 /* ---------------------------
+   REVEAL AO ROLAR
+---------------------------- */
+(function () {
+  var items = document.querySelectorAll(".reveal");
+  if (!items.length) return;
+
+  if (REDUCE_MOTION || !("IntersectionObserver" in window)) {
+    items.forEach(function (el) { el.classList.add("is-visible"); });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
+
+  items.forEach(function (el) { observer.observe(el); });
+})();
+
+/* ---------------------------
    Porta Admin — PIN (easter-egg)
    3 cliques rápidos no hotspot
 ---------------------------- */
@@ -219,6 +282,7 @@ document.addEventListener("click", function (ev) {
   var tip = document.querySelector(".scroll-indicator");
   var hero = document.querySelector(".hero");
   if (!tip || !hero) return;
+  if (REDUCE_MOTION) return;
 
   function onScroll() {
     // posição atual do hero no viewport

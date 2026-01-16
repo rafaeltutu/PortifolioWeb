@@ -8,7 +8,7 @@
   <meta name="description" content="Desenvolvedor de aplicações web, mobile Flutter e integrações de APIs.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
@@ -17,7 +17,12 @@
   <header class="site-header">
     <div class="container nav">
       <a class="brand" href="#inicio">Ti<span>Dev</span></a>
-      <nav>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Principal">
         <a href="#inicio">Início</a>
         <a href="#sobre">Sobre</a>
         <a href="#servicos">Serviços</a>

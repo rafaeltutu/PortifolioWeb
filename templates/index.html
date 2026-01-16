@@ -11,7 +11,7 @@
 
     <div class="video-overlay"></div>
 
-    <div class="hero-content">
+    <div class="hero-content reveal">
       <h1>Transformo ideias em sistemas inteligentes.</h1>
       <p class="hero-sub">Criação de sistemas e aplicativos sob medida para você e sua empresa.</p>
       <a href="#sobre" class="btn btn-primary">Conheça meu trabalho</a>
@@ -24,7 +24,7 @@
 <section id="sobre" class="section fullscreen snap" aria-labelledby="sobre-title">
   <div class="container">
     <div class="grid grid-2">
-      <div class="prose" id="sobre-content">
+      <div class="prose reveal" id="sobre-content">
         <h2 id="sobre-title">Sobre</h2>
 
         <p>
@@ -52,7 +52,7 @@
       </div>
 
       <!-- KPIs -->
-      <aside class="stats-panel" aria-label="Indicadores de experiência">
+      <aside class="stats-panel reveal" aria-label="Indicadores de experiência">
         <div class="stats-grid">
           <div class="stat">
             <div class="kpi">+5</div>
@@ -80,7 +80,7 @@
     <div class="grid grid-4">
 
       <!-- Aplicações Web -->
-      <article class="card service">
+      <article class="card service reveal">
         <img class="service-img" src="{{ url_for('static', filename='img/servicos/web.png') }}"
           alt="Aplicação web com back-end Flask e front-end limpo" loading="lazy" decoding="async">
         <div class="service-body">
@@ -91,7 +91,7 @@
       </article>
 
       <!-- Apps Mobile (Flutter) -->
-      <article class="card service">
+      <article class="card service reveal">
         <img class="service-img" src="{{ url_for('static', filename='img/servicos/flutter.png') }}"
           alt="Apps mobile e web feitos em Flutter" loading="lazy" decoding="async">
         <div class="service-body">
@@ -102,7 +102,7 @@
       </article>
 
       <!-- Integrações de APIs -->
-      <article class="card service">
+      <article class="card service reveal">
         <img class="service-img" src="{{ url_for('static', filename='img/servicos/apis.png') }}"
           alt="Integrações de APIs, automações e WebSockets" loading="lazy" decoding="async">
         <div class="service-body">
@@ -113,7 +113,7 @@
       </article>
 
       <!-- Dados & SQL -->
-      <article class="card service">
+      <article class="card service reveal">
         <img class="service-img" src="{{ url_for('static', filename='img/servicos/sql.png') }}"
           alt="Modelagem de banco de dados, views e pipelines" loading="lazy" decoding="async">
         <div class="service-body">
@@ -136,7 +136,7 @@
     <div class="projects-flex">
 
       <!-- Agiliza -->
-      <article class="card project">
+      <article class="card project reveal">
         <div class="badge">Flutter • Flask API</div>
         <h3>Agiliza — Gestão Logística</h3>
         <p>
@@ -151,7 +151,7 @@
       </article>
 
       <!-- SGP -->
-      <article class="card project">
+      <article class="card project reveal">
         <div class="badge">Flask (Front + Back)</div>
         <h3>SGP — Sistema de Gestão de Performance</h3>
         <p>
@@ -166,7 +166,7 @@
       </article>
 
       <!-- CondOrb -->
-      <article class="card project">
+      <article class="card project reveal">
         <div class="badge">Flutter</div>
         <h3>CondOrb — Reservas de Áreas</h3>
         <p>
@@ -180,7 +180,7 @@
       </article>
 
       <!-- Portal de Avisos -->
-      <article class="card project">
+      <article class="card project reveal">
         <div class="badge">Flask • YouTube</div>
         <h3>Portal de Avisos — Sinalização Interna</h3>
         <p>
@@ -191,6 +191,19 @@
         <div class="tags">
           <span>#sinalização</span><span>#RH</span><span>#YouTube</span>
           <span>#Flask</span>
+        </div>
+      </article>
+
+      <article class="card project reveal">
+        <div class="badge">Figma   Flask</div>
+        <h3>CRM MVP</h3>
+        <p>
+          MVP de CRM com quadro visual para etapas (Novo, Qualificado, Proposta, Negócio),
+          notificações de próxima ação e foco em acompanhar oportunidades comerciais em um só lugar.
+        </p>
+        <div class="tags">
+          <span>#CRM</span><span>#MVP</span><span>#kanban</span>
+          <span>#Flask</span><span>#UX</span><span>#notificações</span>
         </div>
       </article>
 
@@ -213,7 +226,7 @@
     {% endif %}
     {% endwith %}
 
-    <form class="card contact" method="POST" action="{{ url_for('contato') }}" novalidate>
+    <form class="card contact reveal" method="POST" action="{{ url_for('contato') }}" novalidate>
       <div class="grid grid-2">
         <div class="form-field">
           <label for="name">Nome*</label>

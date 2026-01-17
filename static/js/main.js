@@ -39,6 +39,29 @@ document.addEventListener("click", function (ev) {
 });
 
 /* ---------------------------
+   HASH LOAD - jump without smooth scroll
+---------------------------- */
+(function () {
+  if (!window.location.hash) return;
+  if (REDUCE_MOTION) return;
+
+  var root = document.documentElement;
+  var prevBehavior = root.style.scrollBehavior;
+  var prevSnap = root.style.scrollSnapType;
+
+  root.style.scrollBehavior = "auto";
+  root.style.scrollSnapType = "none";
+
+  window.requestAnimationFrame(function () {
+    var id = window.location.hash.slice(1);
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
+    root.style.scrollBehavior = prevBehavior;
+    root.style.scrollSnapType = prevSnap;
+  });
+})();
+
+/* ---------------------------
    MENU MOBILE
 ---------------------------- */
 (function () {

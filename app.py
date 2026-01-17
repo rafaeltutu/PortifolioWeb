@@ -172,6 +172,17 @@ def create_app():
         leads = Lead.query.order_by(Lead.created_at.desc()).all()
         return render_template("admin_leads.html", leads=leads)
 
+    @app.post("/admin/leads/<int:lead_id>/delete")
+    @admin_required
+    def admin_leads_delete(lead_id):
+        lead = db.session.get(Lead, lead_id)
+        if not lead:
+            abort(404)
+        db.session.delete(lead)
+        db.session.commit()
+        flash("Lead excluído.", "success")
+        return redirect(url_for("admin_leads"))
+
     @app.get("/admin/leads.csv")
     @admin_required
     def admin_leads_csv():

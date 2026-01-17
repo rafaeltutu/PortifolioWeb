@@ -17,6 +17,7 @@
           <th>E-mail</th>
           <th>Telefone</th>
           <th>Mensagem</th>
+          <th class="table-actions">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -27,10 +28,16 @@
           <td>{{ l.email }}</td>
           <td>{{ l.phone or '-' }}</td>
           <td style="max-width: 520px; white-space: pre-wrap;">{{ l.message }}</td>
+          <td class="table-actions">
+            <form method="POST" action="{{ url_for('admin_leads_delete', lead_id=l.id) }}"
+              onsubmit="return confirm('Tem certeza que deseja excluir este lead?');">
+              <button class="btn btn-danger" type="submit">Excluir</button>
+            </form>
+          </td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="5">Sem registros.</td>
+          <td colspan="6">Sem registros.</td>
         </tr>
         {% endfor %}
       </tbody>

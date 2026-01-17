@@ -244,6 +244,14 @@ body::before{ content:""; display:block; height: var(--header-h); }
   width:100vw; height:56.25vw; min-width:100%; min-height:100%;
   pointer-events:none; border:0;
 }
+@media (max-width: 900px){
+  .yt-wrap iframe{
+    width: 177.78vh;
+    height: 100vh;
+    min-width: 100%;
+    min-height: 100%;
+  }
+}
 
 /* ===== Cards ===== */
 .card{

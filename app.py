@@ -17,11 +17,11 @@ db = SQLAlchemy()
 # Models
 # ----------------------------
 class Lead(db.Model):
-    id         = db.Column(db.Integer, primary_key=True)
-    name       = db.Column(db.String(120), nullable=False)
-    email      = db.Column(db.String(200), nullable=False)
-    phone      = db.Column(db.String(50))
-    message    = db.Column(db.Text, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(200), nullable=False)
+    phone = db.Column(db.String(50))
+    message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 
@@ -96,22 +96,13 @@ def create_app():
             return f(*a, **k)
         return _w
 
-    # ----------------- headers básicos -----------------
-    @app.after_request
-    def _security_headers(resp):
-        resp.headers.setdefault("X-Content-Type-Options", "nosniff")
-        resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
-        resp.headers.setdefault("X-XSS-Protection", "1; mode=block")
-        return resp
-
-    # ----------------- rotas públicas -----------------
-    @app.route("/")
-    def index():
+    def _home_context():
+        """Contexto base para renderizar a home (reutilizado por / e /contato)."""
         services = [
             {"icon": "code",       "title": "Aplicações Web",          "desc": "Back-end sólido (Flask) com front limpo e acessível."},
             {"icon": "smartphone", "title": "Apps Mobile (Flutter)",    "desc": "Android/iOS com foco em performance e UX."},
             {"icon": "plug",       "title": "Integrações de APIs",      "desc": "REST, autenticação, ETL, automações e WebSockets."},
-            {"icon": "database",   "title": "Dados & SQL",              "desc": "Modelagem, views complexas e pipelines confiáveis."},
+            {"icon": "database",   "title": "Dados & SQL",             "desc": "Modelagem, views complexas e pipelines confiáveis."},
         ]
         projects = [
             {"title": "Agiliza (Logística)", "stack": "Flask • SQL Server • Flutter Web",
@@ -124,10 +115,35 @@ def create_app():
              "desc": "TV corporativa com sobreposições dinâmicas e agendamento.",
              "tags": ["Frontend", "Automação"], "link": "#"},
         ]
-        return render_template("index.html", services=services, projects=projects)
+        return {"services": services, "projects": projects}
 
-    @app.post("/contato")
+    # ----------------- headers básicos -----------------
+    @app.after_request
+    def _security_headers(resp):
+        resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+        resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        resp.headers.setdefault("X-XSS-Protection", "1; mode=block")
+        return resp
+
+    # ----------------- rotas públicas -----------------
+    @app.get("/")
+    def index():
+        ctx = _home_context()
+        return render_template("index.html", **ctx)
+
+    @app.get('/politica-privacidade')
+    def privacy():
+        return render_template('privacy.html')
+
+    @app.route("/contato", methods=["GET", "POST"])
     def contato():
+        ctx = _home_context()
+
+        if request.method == "GET":
+            # Renderiza a mesma home e pede para descer para a seção contatos
+            return render_template("index.html", scroll_to="contatos", **ctx)
+
+        # ====== POST (envio do formulário) ======
         name  = (request.form.get("name") or "").strip()
         email = (request.form.get("email") or "").strip()
         phone = (request.form.get("phone") or "").strip()
@@ -139,13 +155,14 @@ def create_app():
 
         if not name or not email or not msg:
             flash("Por favor, preencha nome, e-mail e mensagem.", "error")
-            return redirect(url_for("index") + "#contatos")
+            return redirect(url_for("contato"))
 
         lead = Lead(name=name, email=email, phone=phone, message=msg)
         db.session.add(lead)
         db.session.commit()
+
         flash("Recebi sua mensagem! Em breve entro em contato.", "success")
-        return redirect(url_for("index") + "#contatos")
+        return redirect(url_for("contato"))
 
     # ----------------- portal admin (protegido) -----------------
     @app.post("/admin/door")
@@ -161,7 +178,6 @@ def create_app():
     @app.get("/admin/logout")
     def admin_logout():
         session.pop("admin_ok", None)
-        # anula Basic Auth via no-store (evita cache)
         resp = redirect(url_for("index"))
         resp.headers["Cache-Control"] = "no-store"
         return resp
@@ -170,7 +186,8 @@ def create_app():
     @admin_required
     def admin_leads():
         leads = Lead.query.order_by(Lead.created_at.desc()).all()
-        return render_template("admin_leads.html", leads=leads)
+        # marca para desabilitar analytics nessa página administrativa
+        return render_template("admin_leads.html", leads=leads, disable_analytics=True)
 
     @app.post("/admin/leads/<int:lead_id>/delete")
     @admin_required
@@ -215,7 +232,7 @@ def create_app():
 
 
 # ----------------------------
-# Entrypoint
+# Entrypoint (somente dev)
 # ----------------------------
 if __name__ == "__main__":
     app = create_app()

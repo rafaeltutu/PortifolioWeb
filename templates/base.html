@@ -8,15 +8,178 @@
   <meta name="description" content="Desenvolvedor de aplicações web, mobile Flutter e integrações de APIs.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {# Analytics: carregamento condicional via cookie de consentimento. #}
+  {# Não carrega em páginas administrativas quando 'disable_analytics' estiver True. #}
+  {% if not (disable_analytics or session.get('admin_ok')) %}
+  <script>
+    // Helper: lê cookie simples
+    function _getCookie(name) {
+      const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+      return v ? v.pop() : null;
+    }
+
+    function _setCookie(name, value, days){
+      var d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+      document.cookie = name + '=' + value + ';path=/;SameSite=Lax;expires=' + d.toUTCString();
+    }
+
+    // Carrega o gtag dinamicamente e inicializa
+    function _loadGtag() {
+      if (window.gtagLoaded) return;
+      window.gtagLoaded = true;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YRY6WN8TTN';
+      s.onload = function () {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-YRY6WN8TTN');
+      };
+      document.head.appendChild(s);
+    }
+
+    // Remove consent cookie (revogar)
+    function _revokeConsent(){
+      _setCookie('ga_consent','', -1);
+      // reload page to apply changes (no analytics)
+      location.reload();
+    }
+
+    // Se cookie de consentimento já existe, carrega gtag
+    if (_getCookie('ga_consent') === 'yes') {
+      _loadGtag();
+    }
+  </script>
+
+  <!-- Banner completo de consentimento de cookies -->
+  <style>
+    #cookie-consent { position: fixed; right: 16px; bottom: 16px; background: #111; color:#fff; padding:16px; border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,.28); z-index:9999; max-width:420px; font-family:inherit }
+    #cookie-consent p{ margin:0 0 10px 0; font-size:14px; line-height:1.3 }
+    #cookie-consent .cc-actions{ display:flex; gap:8px; align-items:center }
+    #cookie-consent a.cc-link{ color:#9ecfff; text-decoration:underline }
+    #cookie-management { position: fixed; right: 16px; bottom: 86px; background:#fff; color:#111; padding:12px; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,.2); z-index:9999; display:none; max-width:420px }
+    #cookie-management h4{ margin:0 0 8px 0 }
+    #cookie-management p{ margin:0 0 10px 0; font-size:13px }
+    #cookie-management button{ margin-right:8px }
+    .footer-cookie-btn{ cursor:pointer; color:inherit; text-decoration:underline; border:none; background:none; padding:0 }
+  </style>
+
+  <div id="cookie-consent" aria-live="polite" style="display:none">
+    <p><strong>Usamos cookies</strong> para melhorar a experiência e analisar tráfego. Ao aceitar, ativamos ferramentas de analytics.</p>
+    <div class="cc-actions">
+      <button id="cc-accept" class="btn btn-primary">Aceitar</button>
+      <button id="cc-decline" class="btn btn-ghost">Recusar</button>
+      <a class="cc-link" href="{{ url_for('privacy') }}" target="_blank" rel="noopener">Política de Privacidade</a>
+    </div>
+  </div>
+
+  <div id="cookie-management" role="dialog" aria-hidden="true">
+    <h4>Gerenciar cookies</h4>
+    <p>Escolha suas preferências de cookies. Você pode aceitar, recusar ou revogar consentimento a qualquer momento.</p>
+    <div>
+      <button id="cm-accept" class="btn btn-primary">Aceitar</button>
+      <button id="cm-decline" class="btn btn-ghost">Recusar</button>
+    </div>
+  <!-- Hotspot de contingência removido: agora há um link visível discreto (©) no rodapé que aponta para /admin/leads sem tooltip. -->
+  <script>
+    // Delegated click handler: intercepta cliques no link com id 'admin-door' mesmo que o elemento
+    // seja renderizado depois do script. Pede PIN e tenta liberar sessão via /admin/door.
+    (function(){
+      try {
+        document.addEventListener('click', function(ev){
+          var target = ev.target;
+          if (!target) return;
+          // se o clique for no próprio elemento interno (&copy;) dentro do link, normalize para o <a>
+          if (target.nodeType === 3) target = target.parentNode;
+          // aceita tanto o id no próprio <a> quanto clicks em crianças
+          if (target && (target.id === 'admin-door' || (target.closest && target.closest('#admin-door')))){
+            var link = target.id === 'admin-door' ? target : target.closest('#admin-door');
+            if (!link) return;
+            // evita navegação padrão
+            ev.preventDefault();
+            var pin = prompt('Informe o PIN de acesso ao painel administrativo:');
+            if (!pin) return;
+
+            fetch('/admin/door', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ pin: pin })
+            }).then(function(resp){
+              if (!resp.ok) throw new Error('Autenticação falhou');
+              return resp.json();
+            }).then(function(data){
+              if (data && data.ok) {
+                // redireciona para a URL guardada em data-target (previne abrir direto via href)
+                var target = link.getAttribute('data-target') || link.getAttribute('href');
+                if (target) window.location.href = target;
+              } else {
+                alert('PIN incorreto. Acesso negado.');
+              }
+            }).catch(function(err){
+              console.error(err);
+              alert('Erro ao verificar PIN. Verifique o console do navegador.');
+            });
+          }
+        }, {passive:false});
+      } catch(e){ console.error(e); }
+    })();
+  </script>
+  </div>
+
+  <!-- botão discreto no rodapé para reabrir gerenciamento -->
+  <script>
+    (function(){
+      try {
+        var consent = _getCookie('ga_consent');
+        var banner = document.getElementById('cookie-consent');
+        var mgmt = document.getElementById('cookie-management');
+        // mostra banner se ainda não decidiu
+        if (!consent && banner) banner.style.display = 'block';
+
+        // hook buttons
+        document.addEventListener('click', function (e) {
+          if (!e.target) return;
+          if (e.target.id === 'cc-accept' || e.target.id === 'cm-accept'){
+            _setCookie('ga_consent','yes',365);
+            _loadGtag();
+            if (banner) banner.style.display='none';
+            if (mgmt) mgmt.style.display='none';
+          }
+          if (e.target.id === 'cc-decline' || e.target.id === 'cm-decline'){
+            _setCookie('ga_consent','no',365);
+            if (banner) banner.style.display='none';
+            if (mgmt) mgmt.style.display='none';
+          }
+          if (e.target.id === 'cm-revoke'){
+            _revokeConsent();
+          }
+          // footer manage button
+          if (e.target && e.target.classList && e.target.classList.contains('footer-cookie-btn')){
+            if (mgmt) {
+              mgmt.style.display = mgmt.style.display === 'block' ? 'none' : 'block';
+            }
+          }
+        }, {passive:true});
+      } catch (err) { console.error(err); }
+    })();
+  </script>
+  {% endif %}
 </head>
 
 <body class="dark">
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="#inicio"><span class="brand-accent">RFL</span><span class="brand-word">Tecnologia</span></a>
+      <a class="brand" href="{{ url_for('index') }}#inicio">
+        <span class="brand-accent">RFL</span><span class="brand-word">Tecnologia</span>
+      </a>
+
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>
@@ -27,7 +190,8 @@
         <a href="#sobre">Sobre</a>
         <a href="#servicos">Serviços</a>
         <a href="#projetos">Projetos</a>
-        <a href="#contatos">Contatos</a>
+        <a href="{{ url_for('contato') }}">Contatos</a>
+
       </nav>
 
     </div>
@@ -35,62 +199,66 @@
 
   {% block content %}{% endblock %}
 
-<footer class="site-footer v2" role="contentinfo">
-  <div class="footer-wrap">
+  <footer class="site-footer v2" role="contentinfo">
+    <div class="footer-wrap">
 
-    <!-- Ícones clicáveis (links nos ícones) -->
-    <div class="social">
-      <a href="https://github.com/rafaeltutu" aria-label="GitHub" rel="noopener" target="_blank">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path fill="currentColor"
-            d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.69c-2.78.61-3.37-1.19-3.37-1.19-.46-1.18-1.12-1.49-1.12-1.49-.92-.63.07-.62.07-.62 1.02.08 1.55 1.06 1.55 1.06 .9 1.54 2.36 1.09 2.94.83 .09-.65.35-1.09.64-1.34 -2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.98 1.03-2.68 -.1-.25-.45-1.27.1-2.65 0 0 .85-.27 2.79 1.02A9.7 9.7 0 0 1 12 6.8c.86 0 1.73.12 2.54.35 1.93-1.29 2.78-1.02 2.78-1.02 .56 1.38.21 2.4.1 2.65 .64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95 .36.31.69.92.69 1.86v2.75c0 .27.18.59.69.49A10 10 0 0 0 12 2Z" />
-        </svg>
-      </a>
+      <!-- Ícones clicáveis (links nos ícones) -->
+      <div class="social">
+        <a href="https://github.com/rafaeltutu" aria-label="GitHub" rel="noopener" target="_blank">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path fill="currentColor"
+              d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.69c-2.78.61-3.37-1.19-3.37-1.19-.46-1.18-1.12-1.49-1.12-1.49-.92-.63.07-.62.07-.62 1.02.08 1.55 1.06 1.55 1.06 .9 1.54 2.36 1.09 2.94.83 .09-.65.35-1.09.64-1.34 -2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.98 1.03-2.68 -.1-.25-.45-1.27.1-2.65 0 0 .85-.27 2.79 1.02A9.7 9.7 0 0 1 12 6.8c.86 0 1.73.12 2.54.35 1.93-1.29 2.78-1.02 2.78-1.02 .56 1.38.21 2.4.1 2.65 .64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.95 .36.31.69.92.69 1.86v2.75c0 .27.18.59.69.49A10 10 0 0 0 12 2Z" />
+          </svg>
+        </a>
 
-      <a href="https://www.linkedin.com/in/rafaeltutu/" aria-label="LinkedIn" rel="noopener" target="_blank">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path fill="currentColor"
-            d="M6.94 8.5H4.09V20h2.85V8.5ZM5.52 7.19c.92 0 1.66-.75 1.66-1.66s-.74-1.66-1.66-1.66 -1.66.75-1.66 1.66 .74 1.66 1.66 1.66ZM20 20h-2.84v-5.97c0-1.42-.03-3.25-1.98-3.25 -1.98 0-2.28 1.55-2.28 3.15V20H10.07V8.5h2.73v1.56h.04c.38-.72 1.32-1.48 2.72-1.48 2.91 0 3.44 1.92 3.44 4.42V20Z" />
-        </svg>
-      </a>
+        <a href="https://www.linkedin.com/in/rafaeltutu/" aria-label="LinkedIn" rel="noopener" target="_blank">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path fill="currentColor"
+              d="M6.94 8.5H4.09V20h2.85V8.5ZM5.52 7.19c.92 0 1.66-.75 1.66-1.66s-.74-1.66-1.66-1.66 -1.66.75-1.66 1.66 .74 1.66 1.66 1.66ZM20 20h-2.84v-5.97c0-1.42-.03-3.25-1.98-3.25 -1.98 0-2.28 1.55-2.28 3.15V20H10.07V8.5h2.73v1.56h.04c.38-.72 1.32-1.48 2.72-1.48 2.91 0 3.44 1.92 3.44 4.42V20Z" />
+          </svg>
+        </a>
 
-      <a href="mailto:rafaeltutu19@gmail.com" aria-label="E-mail">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path fill="currentColor"
-            d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z" />
-        </svg>
-      </a>
+        <a href="mailto:rafaeltutu19@gmail.com" aria-label="E-mail">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path fill="currentColor"
+              d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z" />
+          </svg>
+        </a>
+      </div>
+
+      <!-- Linha de marca + hotspot invisível para o PIN -->
+      <div class="brandline">
+        &copy; RFLTecnologia - Todos os direitos reservados
+        <span id="admin-brand-hotspot" aria-hidden="true"></span>
+      </div>
+
+      <!-- Contato textual (opcional) -->
+      <div class="contactline">
+        <a href="https://github.com/rafaeltutu" target="_blank" rel="noopener">github.com/rafaeltutu</a>
+        <span class="sep">•</span>
+        <a href="https://www.linkedin.com/in/rafaeltutu/" target="_blank" rel="noopener">linkedin.com/in/rafaeltutu</a>
+        <span class="sep">•</span>
+        <a href="mailto:rafaeltutu19@gmail.com">rafaeltutu19@gmail.com</a>
+        <span class="sep">•</span>
+        <button class="footer-cookie-btn" aria-label="Gerenciar cookies" title="Gerenciar cookies">&copy;</button>
+     <!-- Link discreto para painel de leads (©). Sem title para não mostrar tooltip ao passar o mouse.
+       Para evitar que alguém abra diretamente (via abrir em nova aba / middle-click), o href
+       foi removido/neutralizado e a URL real é guardada em data-target. O JS solicita o PIN
+       e só então redireciona para data-target. -->
+     <a id="admin-door" aria-label="Painel de leads" href="#" data-target="{{ url_for('admin_leads') }}" class="admin-hotspot" style="color:inherit; text-decoration:none; margin-left:8px;">&copy;</a>
+      </div>
     </div>
+  </footer>
 
-    <!-- Linha de marca + hotspot invisível para o PIN -->
-    <div class="brandline">
-      &copy; RFLTecnologia - Todos os direitos reservados
-      <span id="admin-brand-hotspot" aria-hidden="true"></span>
-    </div>
+  <!-- Hotspot de contingência removido: agora há um link visível discreto (©) no rodapé que aponta para /admin/leads sem tooltip. -->
 
-    <!-- Contato textual (opcional) -->
-    <div class="contactline">
-      <a href="https://github.com/rafaeltutu" target="_blank" rel="noopener">github.com/rafaeltutu</a>
-      <span class="sep">•</span>
-      <a href="https://www.linkedin.com/in/rafaeltutu/" target="_blank" rel="noopener">linkedin.com/in/rafaeltutu</a>
-      <span class="sep">•</span>
-      <a href="mailto:rafaeltutu19@gmail.com">rafaeltutu19@gmail.com</a>
-    </div>
-  </div>
-</footer>
-
-<!-- Hotspot de contingência (opcional, se quiser um botão 100% invisível no canto) -->
-<button id="admin-door"
-  aria-label="admin door" title=""
-  style="position:fixed; inset:auto 16px 10px auto; width:42px; height:18px; opacity:0; border:0; background:transparent; cursor:pointer;">
-</button>
-
-<a class="whatsapp-fab" href="https://wa.me/5541988226702" target="_blank" rel="noopener"
-  aria-label="Falar no WhatsApp">
-  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-    <path fill="currentColor" d="M12.04 0C5.4 0 .04 5.37.04 12c0 2.11.55 4.15 1.6 5.95L0 24l6.2-1.6a11.92 11.92 0 0 0 5.8 1.5h.01c6.63 0 12-5.37 12-12 0-6.63-5.37-12-12-12zm6.1 17.1c-.3.8-1.7 1.5-2.3 1.6-.6.1-1.3.1-2.1-.1-.5-.2-1.1-.4-1.9-.7-3.3-1.4-5.4-4.7-5.6-5-.2-.2-1.3-1.8-1.3-3.3 0-1.6.8-2.4 1.1-2.7.3-.3.6-.4.8-.4h.6c.2 0 .4-.1.6.5.2.6.9 2.3 1 2.5.1.2.2.4 0 .6-.1.2-.2.4-.3.6-.1.2-.4.5-.6.7-.2.2-.4.4-.2.7.2.3.9 1.4 1.9 2.2 1.3 1.1 2.4 1.5 2.7 1.7.3.2.5.2.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.2.7-.1.3.1 1.8.8 2.1 1 .3.1.5.2.6.3.1.1.1.8-.2 1.6z" />
-  </svg>
-</a>
+  <a class="whatsapp-fab" href="https://wa.me/5541988226702" target="_blank" rel="noopener"
+    aria-label="Falar no WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="currentColor"
+        d="M12.04 0C5.4 0 .04 5.37.04 12c0 2.11.55 4.15 1.6 5.95L0 24l6.2-1.6a11.92 11.92 0 0 0 5.8 1.5h.01c6.63 0 12-5.37 12-12 0-6.63-5.37-12-12-12zm6.1 17.1c-.3.8-1.7 1.5-2.3 1.6-.6.1-1.3.1-2.1-.1-.5-.2-1.1-.4-1.9-.7-3.3-1.4-5.4-4.7-5.6-5-.2-.2-1.3-1.8-1.3-3.3 0-1.6.8-2.4 1.1-2.7.3-.3.6-.4.8-.4h.6c.2 0 .4-.1.6.5.2.6.9 2.3 1 2.5.1.2.2.4 0 .6-.1.2-.2.4-.3.6-.1.2-.4.5-.6.7-.2.2-.4.4-.2.7.2.3.9 1.4 1.9 2.2 1.3 1.1 2.4 1.5 2.7 1.7.3.2.5.2.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.2.7-.1.3.1 1.8.8 2.1 1 .3.1.5.2.6.3.1.1.1.8-.2 1.6z" />
+    </svg>
+  </a>
 
 </body>
 

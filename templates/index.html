@@ -261,5 +261,13 @@
     </form>
   </div>
 </section>
+{% if scroll_to %}
+<script>
+  window.addEventListener("load", function () {
+    const el = document.getElementById("{{ scroll_to }}");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  });
+</script>
+{% endif %}
 
 {% endblock %}

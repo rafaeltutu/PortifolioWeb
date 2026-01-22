@@ -174,6 +174,24 @@ body::before{ content:""; display:block; height: var(--header-h); }
   border-bottom-color: rgba(208,228,247,.7);
 }
 
+/* Botão discreto no rodapé para gerenciar cookies */
+.footer-cookie-btn{
+  color: #8fb6d9;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(143,182,217,.35);
+  cursor: pointer;
+}
+.footer-cookie-btn:hover{
+  color: #d0e4f7;
+  border-bottom-color: rgba(208,228,247,.7);
+}
+.footer-cookie-btn:focus{ outline: 2px solid rgba(103,163,255,.15); outline-offset: 2px; border-radius: 6px; }
+
 .site-footer.v2 .contactline .sep{
   color: #5a738c;
 }
